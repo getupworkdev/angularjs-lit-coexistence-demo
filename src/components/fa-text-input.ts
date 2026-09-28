@@ -28,6 +28,11 @@ export class FaTextInput extends LitElement {
     pattern: {},
     autocomplete: {},
     minlength: { type: Number },
+    maxlength: { type: Number },
+    min: {},
+    max: {},
+    step: {},
+    errorMessage: { attribute: "error-message" },
     required: { type: Boolean, reflect: true },
     disabled: { type: Boolean, reflect: true },
     touched: { state: true },
@@ -36,11 +41,18 @@ export class FaTextInput extends LitElement {
   label = "";
   name = "";
   value = "";
-  type: "text" | "email" | "tel" = "text";
+  type: "text" | "email" | "tel" | "number" | "date" = "text";
   hint = "";
   pattern?: string;
-  autocomplete?: string;
+  /** Defaults to "off": browsers keep autofill history on disk, which is wrong for clinical fields. */
+  autocomplete = "off";
   minlength?: number;
+  maxlength?: number;
+  min?: string;
+  max?: string;
+  step?: string;
+  /** Replaces the browser's generic validation message, e.g. "Enter a pulse between 30 and 220." */
+  errorMessage = "";
   required = false;
   disabled = false;
   private touched = false;
@@ -82,7 +94,11 @@ export class FaTextInput extends LitElement {
         name=${this.name}
         pattern=${this.pattern ?? nothing}
         minlength=${this.minlength ?? nothing}
-        autocomplete=${this.autocomplete ?? nothing}
+        maxlength=${this.maxlength ?? nothing}
+        min=${this.min ?? nothing}
+        max=${this.max ?? nothing}
+        step=${this.step ?? nothing}
+        autocomplete=${this.autocomplete}
         ?required=${this.required}
         ?disabled=${this.disabled}
         aria-invalid=${showError ? "true" : "false"}
@@ -91,7 +107,7 @@ export class FaTextInput extends LitElement {
         @blur=${() => (this.touched = true)}
       />
       ${this.hint ? html`<p id="hint" class="hint">${this.hint}</p>` : ""}
-      <p id="error" class="error" ?hidden=${!showError}>${showError ? input!.validationMessage : ""}</p>
+      <p id="error" class="error" ?hidden=${!showError}>${showError ? this.#message(input!) : ""}</p>
     `;
   }
 
@@ -110,7 +126,11 @@ export class FaTextInput extends LitElement {
     if (!input) return;
     this.#internals.setFormValue(this.value);
     if (input.validity.valid) this.#internals.setValidity({});
-    else this.#internals.setValidity(input.validity, input.validationMessage, input);
+    else this.#internals.setValidity(input.validity, this.#message(input), input);
+  }
+
+  #message(input: HTMLInputElement): string {
+    return this.errorMessage || input.validationMessage;
   }
 
   get #input(): HTMLInputElement | null {
