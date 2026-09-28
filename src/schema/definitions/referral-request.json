@@ -1,0 +1,45 @@
+{
+  "id": "referral-request",
+  "title": "Referral request",
+  "description": "Synthetic referral to a specialty clinic.",
+  "submitLabel": "Send referral",
+  "sections": [
+    {
+      "title": "Referral",
+      "fields": [
+        {
+          "name": "specialty", "label": "Specialty", "type": "select", "required": true,
+          "options": [
+            { "value": "cardiology", "label": "Cardiology" },
+            { "value": "dermatology", "label": "Dermatology" },
+            { "value": "neurology", "label": "Neurology" },
+            { "value": "orthopaedics", "label": "Orthopaedics" }
+          ]
+        },
+        {
+          "name": "urgency", "label": "Urgency", "type": "radio", "required": true,
+          "options": [
+            { "value": "routine", "label": "Routine" },
+            { "value": "soon", "label": "Soon" },
+            { "value": "urgent", "label": "Urgent" }
+          ]
+        },
+        {
+          "name": "reason", "label": "Reason for referral", "type": "textarea", "required": true,
+          "minLength": 20, "maxLength": 1000, "rows": 4,
+          "message": "Describe the reason in at least 20 characters."
+        }
+      ]
+    },
+    {
+      "title": "Referring clinician",
+      "columns": 2,
+      "fields": [
+        { "name": "referrerName", "label": "Clinician name", "type": "text", "required": true, "width": "half" },
+        { "name": "clinic", "label": "Clinic", "type": "text", "required": true, "width": "half" },
+        { "name": "referrerPhone", "label": "Contact phone", "type": "tel", "pattern": "[0-9 +\\(\\)\\-]{7,20}", "width": "half" },
+        { "name": "attachmentsCount", "label": "Number of attachments", "type": "number", "min": 0, "max": 20, "step": 1, "width": "half" }
+      ]
+    }
+  ]
+}

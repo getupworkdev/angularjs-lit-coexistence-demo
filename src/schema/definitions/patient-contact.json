@@ -1,0 +1,49 @@
+{
+  "id": "patient-contact",
+  "title": "Patient contact details",
+  "description": "Synthetic registration form. Use made-up details only.",
+  "submitLabel": "Save contact details",
+  "sections": [
+    {
+      "title": "Identity",
+      "columns": 2,
+      "fields": [
+        { "name": "givenName", "label": "Given name", "type": "text", "required": true, "maxLength": 60, "width": "half" },
+        { "name": "familyName", "label": "Family name", "type": "text", "required": true, "maxLength": 60, "width": "half" },
+        { "name": "dateOfBirth", "label": "Date of birth", "type": "date", "required": true, "min": "1900-01-01", "max": "2026-12-31", "width": "half" },
+        {
+          "name": "recordNumber", "label": "Synthetic record number", "type": "text", "required": true,
+          "pattern": "SYN-[0-9]{4}", "hint": "Format SYN-0000.", "message": "Use the format SYN-0000.", "width": "half"
+        }
+      ]
+    },
+    {
+      "title": "Contact",
+      "columns": 2,
+      "fields": [
+        { "name": "email", "label": "Email", "type": "email", "width": "half" },
+        {
+          "name": "phone", "label": "Phone", "type": "tel", "pattern": "[0-9 +\\(\\)\\-]{7,20}",
+          "message": "Enter a phone number using digits, spaces, +, ( ) or -.", "width": "half"
+        },
+        {
+          "name": "preferredContact", "label": "Preferred contact method", "type": "radio", "required": true,
+          "options": [
+            { "value": "phone", "label": "Phone" },
+            { "value": "email", "label": "Email" },
+            { "value": "post", "label": "Post" }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Consent",
+      "fields": [
+        {
+          "name": "syntheticConfirmed", "label": "I confirm these details are made up for testing", "type": "checkbox",
+          "required": true, "message": "Please confirm the details are synthetic."
+        }
+      ]
+    }
+  ]
+}
