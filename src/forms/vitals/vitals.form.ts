@@ -1,4 +1,7 @@
+// The AngularJS original of the vitals form. Its Lit conversion is
+// ../vitals-lit/vitals-lit.form.ts; docs/CONVERSION_GUIDE.md walks through it.
 import type { UserContextService } from "../../legacy/module";
+import { logEvent } from "../../shared/log";
 import type { FormModule } from "../registry";
 
 class VitalsController {
@@ -10,6 +13,7 @@ class VitalsController {
 
   submit(valid: boolean) {
     this.saved = valid;
+    if (valid) logEvent("form.submit", { form: "vitals" });
   }
 }
 
@@ -24,11 +28,11 @@ export const form: FormModule = {
         <form name="vitals" novalidate ng-submit="vm.submit(vitals.$valid)">
           <label for="pulse">Pulse (bpm)</label>
           <input id="pulse" name="pulse" type="number" min="30" max="220" ng-model="vm.model.pulse" ng-required="true"
-                 aria-describedby="pulse-error">
+                 autocomplete="off" aria-describedby="pulse-error">
           <p id="pulse-error" class="error" ng-show="vitals.$submitted && vitals.pulse.$invalid">Enter a pulse between 30 and 220.</p>
           <label for="temp">Temperature (°C)</label>
           <input id="temp" name="temp" type="number" step="0.1" min="30" max="45" ng-model="vm.model.tempC"
-                 ng-required="true" aria-describedby="temp-error">
+                 ng-required="true" autocomplete="off" aria-describedby="temp-error">
           <p id="temp-error" class="error" ng-show="vitals.$submitted && vitals.temp.$invalid">Enter a temperature between 30 and 45.</p>
           <button type="submit">Record</button>
         </form>
