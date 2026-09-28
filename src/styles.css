@@ -1,0 +1,40 @@
+:root {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color: #111827;
+  background: #f9fafb;
+  line-height: 1.5;
+}
+body { margin: 0; }
+app-shell { display: block; }
+
+.shell-header {
+  display: flex; flex-wrap: wrap; gap: 0.5rem 1rem; align-items: center; justify-content: space-between;
+  padding: 0.75rem 1.25rem; background: #1f2937; color: #f9fafb;
+}
+.shell-header .brand { margin: 0; font-weight: 700; }
+.shell-header .tag { font-weight: 400; font-size: 0.8rem; background: #374151; padding: 0.1rem 0.5rem;
+                     border-radius: 999px; margin-left: 0.5rem; }
+.shell-header button { margin-left: 0.5rem; font: inherit; }
+
+.shell-body { display: flex; flex-wrap: wrap; align-items: flex-start; }
+nav { flex: 0 0 15rem; padding: 1rem; }
+nav ul { list-style: none; margin: 0; padding: 0; }
+nav a { display: block; padding: 0.4rem 0.6rem; border-radius: 4px; color: #1d4ed8; text-decoration: none; }
+nav a:hover { background: #e5e7eb; }
+nav a[aria-current="page"] { background: #dbeafe; color: #1e3a8a; font-weight: 600; }
+nav .fw { display: block; font-size: 0.75rem; color: #4b5563; }
+main { flex: 1 1 24rem; padding: 1rem 1.25rem 2rem; min-width: 0; }
+
+/* Global styles the AngularJS views rely on - one reason they live in light DOM. */
+.legacy-form h1 { font-size: 1.4rem; margin: 0 0 0.25rem; }
+.legacy-form .lede { margin: 0 0 1rem; color: #374151; }
+.legacy-form label { display: block; font-weight: 600; }
+.legacy-form input, .legacy-form select { font: inherit; padding: 0.4rem 0.5rem; margin: 0.25rem 0 0.75rem;
+  border: 1px solid #6b7280; border-radius: 4px; display: block; max-width: 22rem; width: 100%; box-sizing: border-box; }
+.legacy-form button { font: inherit; padding: 0.4rem 0.9rem; margin-right: 0.5rem; }
+.legacy-form .error { color: #b91c1c; margin: -0.5rem 0 0.75rem; font-size: 0.875rem; }
+.legacy-form .muted { color: #4b5563; font-size: 0.875rem; }
+.allergy-list { list-style: none; padding: 0; }
+.allergy-list li { margin-bottom: 0.75rem; }
+.status { display: block; margin-top: 1rem; padding: 0.5rem 0.75rem; background: #ecfdf5; border-radius: 4px; }
+.status.warn { background: #fef3c7; }
