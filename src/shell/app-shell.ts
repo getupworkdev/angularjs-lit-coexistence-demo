@@ -2,9 +2,11 @@ import type angular from "angular";
 import { html, LitElement, nothing } from "lit";
 import { logout } from "../shared/auth";
 import { defineOnce } from "../shared/define";
+import { logError, logEvent } from "../shared/log";
 import { currentUser, subscribe, type User } from "../shared/user-context";
 import { type FormEntry, forms, loadForm } from "../forms/registry";
 import { LegacyOutlet } from "./legacy-outlet";
+import "./session-timeout";
 
 /**
  * The app shell: shared header/nav and one content area. The content area
@@ -41,7 +43,13 @@ export class AppShell extends LitElement {
 
   connectedCallback() {
     super.connectedCallback();
-    this.#unsubscribe = subscribe((user) => (this.user = user));
+    this.#unsubscribe = subscribe((user) => {
+      const signedOut = this.user !== null && user === null;
+      this.user = user;
+      // Sign-out or session timeout: remount the current form so nothing
+      // the previous user typed survives on screen or in component state.
+      if (signedOut) this.#route();
+    });
     window.addEventListener("hashchange", this.#onHashChange);
     this.#route();
   }
@@ -64,6 +72,7 @@ export class AppShell extends LitElement {
     try {
       const mod = await loadForm(entry.id);
       if (seq !== this.#loadSeq) return; // user already moved on
+      logEvent("form.open", { form: entry.id, framework: entry.framework });
       if (mod.kind === "lit") {
         this.content = document.createElement(mod.tag);
       } else {
@@ -74,13 +83,15 @@ export class AppShell extends LitElement {
       }
     } catch (err) {
       if (seq !== this.#loadSeq) return;
+      logError("form.load", err);
       this.content = null;
-      this.error = (err as Error).message;
+      this.error = `Couldn't load ${entry.title}.`;
     }
   }
 
   render() {
     return html`
+      <session-timeout></session-timeout>
       <header class="shell-header">
         <p class="brand">Coexistence demo <span class="tag">synthetic data only</span></p>
         <div class="user" aria-live="polite">

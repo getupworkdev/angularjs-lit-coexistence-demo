@@ -3,6 +3,7 @@ import "../../components/allergy-form";
 import type { AllergyDraft } from "../../components/allergy-form";
 import type { ApiService } from "../../legacy/module";
 import type { Allergy } from "../../shared/api";
+import { logEvent } from "../../shared/log";
 import type { FormModule } from "../registry";
 
 class AllergiesController {
@@ -49,6 +50,7 @@ class AllergiesController {
       this.lastSaved = draft.substance;
       this.selected = null;
     });
+    logEvent("form.submit", { form: "allergies", mode: draft.id ? "edit" : "add" });
   }
 
   cancel() {

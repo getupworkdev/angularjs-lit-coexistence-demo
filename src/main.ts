@@ -1,7 +1,10 @@
 import "./styles.css";
 import { bootstrapLegacy } from "./legacy/module";
+import { startSessionWatch } from "./shared/session";
 import { listenerCount } from "./shared/user-context";
 import { AppShell } from "./shell/app-shell";
+
+startSessionWatch();
 
 // AngularJS first, so the shell has an $injector to hand to <legacy-outlet>.
 const injector = bootstrapLegacy(document.getElementById("legacy-root")!);

@@ -1,6 +1,7 @@
 import angular from "angular";
 import { apiGet } from "../shared/api";
 import { login, logout } from "../shared/auth";
+import { logError } from "../shared/log";
 import { currentUser, subscribe, type User } from "../shared/user-context";
 
 export interface UserContextService {
@@ -40,6 +41,11 @@ legacyModule.factory("api", [
     get: <T>(path: string) => $q.when(apiGet<T>(path)),
   }),
 ]);
+
+// AngularJS's default handler console.error()s the whole exception, and
+// expression errors quote the expression and values involved. Route it
+// through the shared logger, which records only the error's class.
+legacyModule.factory("$exceptionHandler", () => (err: unknown) => logError("angularjs", err));
 
 export function bootstrapLegacy(root: Element): angular.auto.IInjectorService {
   return angular.bootstrap(root, ["legacy"], { strictDi: true });

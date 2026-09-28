@@ -1,6 +1,15 @@
 import { expect, type Page } from "@playwright/test";
 
-export const FORM_IDS = ["intake", "appointment", "profile", "sign-in", "vitals", "allergies"] as const;
+export const FORM_IDS = [
+  "intake",
+  "appointment",
+  "profile",
+  "sign-in",
+  "vitals",
+  "vitals-lit",
+  "allergies",
+  "schema",
+] as const;
 export type FormId = (typeof FORM_IDS)[number];
 
 /** Click the nav link and wait until the shell reports that form as rendered. */

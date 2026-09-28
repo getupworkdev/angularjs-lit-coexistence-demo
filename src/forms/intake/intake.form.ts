@@ -2,6 +2,7 @@ import { html, LitElement } from "lit";
 import "../../components/fa-text-input";
 import { formStyles } from "../../components/form-styles";
 import { defineOnce } from "../../shared/define";
+import { logEvent } from "../../shared/log";
 import type { FormModule } from "../registry";
 
 class IntakeForm extends LitElement {
@@ -32,6 +33,7 @@ class IntakeForm extends LitElement {
     e.preventDefault();
     const form = e.target as HTMLFormElement;
     this.saved = Object.fromEntries(new FormData(form)) as Record<string, string>;
+    logEvent("form.submit", { form: "intake" }); // the form's name, never its values
   }
 }
 

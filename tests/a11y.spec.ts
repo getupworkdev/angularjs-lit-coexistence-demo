@@ -33,6 +33,28 @@ test("intake form in its error state has no violations", async ({ page }) => {
   await expectNoViolations(page);
 });
 
+for (const label of ["Patient contact", "Symptom checklist", "Referral request"]) {
+  test(`schema form "${label}" has no violations, blank and after a failed submit`, async ({ page }) => {
+    await page.goto("/");
+    await openForm(page, "schema");
+    await page.getByLabel("Form definition").selectOption({ label });
+    await expect(page.locator("schema-form form")).toHaveCount(1);
+    await expectNoViolations(page);
+    await page.locator("schema-form").getByRole("button").click();
+    await expectNoViolations(page);
+  });
+}
+
+test("session timeout warning dialog has no violations", async ({ page }) => {
+  await page.clock.install();
+  await page.goto("/");
+  await openForm(page, "profile");
+  await page.getByRole("button", { name: "Sign in as Dr. Demo Clinician" }).click();
+  await page.clock.fastForward("14:01");
+  await expect(page.getByRole("dialog", { name: "Your session is about to end" })).toBeVisible();
+  await expectNoViolations(page);
+});
+
 test("allergies view with the Lit form in edit mode has no violations", async ({ page }) => {
   await page.goto("/");
   await openForm(page, "profile");
