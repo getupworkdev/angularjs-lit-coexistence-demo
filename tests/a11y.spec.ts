@@ -32,3 +32,13 @@ test("intake form in its error state has no violations", async ({ page }) => {
   await expect(page.getByText(/fill out this field/i).first()).toBeVisible();
   await expectNoViolations(page);
 });
+
+test("allergies view with the Lit form in edit mode has no violations", async ({ page }) => {
+  await page.goto("/");
+  await openForm(page, "profile");
+  await page.getByRole("button", { name: "Sign in as Dr. Demo Clinician" }).click();
+  await openForm(page, "allergies");
+  await page.getByRole("button", { name: "Edit Example pollen" }).click();
+  await expect(page.getByRole("heading", { name: "Edit Example pollen" })).toBeVisible();
+  await expectNoViolations(page);
+});

@@ -34,7 +34,12 @@ main { flex: 1 1 24rem; padding: 1rem 1.25rem 2rem; min-width: 0; }
 .legacy-form button { font: inherit; padding: 0.4rem 0.9rem; margin-right: 0.5rem; }
 .legacy-form .error { color: #b91c1c; margin: -0.5rem 0 0.75rem; font-size: 0.875rem; }
 .legacy-form .muted { color: #4b5563; font-size: 0.875rem; }
-.allergy-list { list-style: none; padding: 0; }
-.allergy-list li { margin-bottom: 0.75rem; }
+.allergy-table { border-collapse: collapse; margin-bottom: 0.5rem; }
+.allergy-table caption { text-align: left; font-weight: 600; margin-bottom: 0.25rem; }
+.allergy-table th, .allergy-table td { text-align: left; padding: 0.3rem 1rem 0.3rem 0; border-bottom: 1px solid #e5e7eb; }
+.allergy-table button { margin: 0; padding: 0.2rem 0.6rem; }
+allergy-form { display: block; margin-top: 1.25rem; max-width: 30rem; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden;
+                   clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 .status { display: block; margin-top: 1rem; padding: 0.5rem 0.75rem; background: #ecfdf5; border-radius: 4px; }
 .status.warn { background: #fef3c7; }

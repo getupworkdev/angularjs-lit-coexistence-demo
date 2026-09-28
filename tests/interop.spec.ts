@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, type Page, test } from "@playwright/test";
 import { openForm } from "./helpers";
 
 test("signing in on the AngularJS side shows the user on the Lit side", async ({ page }) => {
@@ -30,21 +30,66 @@ test("signing in on the Lit side shows the user on the AngularJS side", async ({
   await expect(page.getByTestId("vitals-recorder")).toHaveText("Recorded by: nobody yet - sign in first");
 });
 
-test("Lit component inside an AngularJS view: ng-prop in, ng-on out", async ({ page }) => {
+async function openAllergies(page: Page) {
   await page.goto("/");
   await openForm(page, "profile");
   await page.getByRole("button", { name: "Sign in as Dr. Demo Clinician" }).click();
   await openForm(page, "allergies");
-
-  // ng-prop-value reached the Lit element.
-  const pollen = page.getByRole("group", { name: "Example pollen severity" });
-  await expect(pollen.getByRole("radio", { name: "mild" })).toBeChecked();
   await expect(page.getByTestId("severe-count")).toHaveText("Severe allergies: 1");
+}
 
-  // The Lit event reaches the AngularJS model and a digest runs.
-  await pollen.getByRole("radio", { name: "severe" }).check();
-  await expect(page.getByTestId("allergy-model-a1")).toHaveText("AngularJS model: severe");
-  await expect(page.getByTestId("severe-count")).toHaveText("Severe allergies: 2");
+test.describe("Lit form inside an AngularJS view", () => {
+  test("ng-prop-allergy passes the selected allergy into the Lit form", async ({ page }) => {
+    await openAllergies(page);
+    await expect(page.getByRole("heading", { name: "Add allergy" })).toBeVisible();
+
+    await page.getByRole("button", { name: "Edit Example pollen" }).click();
+    await expect(page.getByRole("heading", { name: "Edit Example pollen" })).toBeVisible();
+    await expect(page.getByRole("textbox", { name: "Substance" })).toHaveValue("Example pollen");
+    await expect(page.getByRole("radio", { name: "mild" })).toBeChecked();
+  });
+
+  test("ng-on-allergysave brings the edit back into the AngularJS model", async ({ page }) => {
+    await openAllergies(page);
+    await page.getByRole("button", { name: "Edit Example pollen" }).click();
+    await page.getByRole("radio", { name: "severe" }).check();
+    await page.getByRole("button", { name: "Save changes" }).click();
+
+    // Model updated by the $applyAsync in the handler, and bindings re-rendered.
+    await expect(page.getByTestId("allergy-row-a1")).toContainText("severe");
+    await expect(page.getByTestId("severe-count")).toHaveText("Severe allergies: 2");
+    await expect(page.getByTestId("last-saved")).toHaveText("Saved Example pollen (demo only).");
+    // AngularJS cleared vm.selected, which flowed back into the Lit form.
+    await expect(page.getByRole("heading", { name: "Add allergy" })).toBeVisible();
+  });
+
+  test("adding through the Lit form appends to the AngularJS list", async ({ page }) => {
+    await openAllergies(page);
+    await page.getByRole("textbox", { name: "Substance" }).fill("Demo latex");
+    await page.getByRole("radio", { name: "moderate" }).check();
+    await page.getByRole("button", { name: "Add", exact: true }).click();
+
+    await expect(page.locator("[data-testid^=allergy-row-]")).toHaveCount(4);
+    await expect(page.locator("[data-testid^=allergy-row-]").last()).toContainText("Demo latex");
+    await expect(page.getByRole("textbox", { name: "Substance" })).toHaveValue(""); // reset for the next one
+  });
+
+  test("native validation stops an invalid submit before any event reaches AngularJS", async ({ page }) => {
+    await openAllergies(page);
+    await page.getByRole("button", { name: "Add", exact: true }).click();
+
+    await expect(page.getByRole("textbox", { name: "Substance" })).toHaveAttribute("aria-invalid", "true");
+    await expect(page.locator("[data-testid^=allergy-row-]")).toHaveCount(3);
+    await expect(page.getByTestId("last-saved")).toHaveCount(0);
+  });
+
+  test("ng-on-allergycancel returns the form to add mode", async ({ page }) => {
+    await openAllergies(page);
+    await page.getByRole("button", { name: "Edit Sample antibiotic" }).click();
+    await page.getByRole("button", { name: "Cancel" }).click();
+    await expect(page.getByRole("heading", { name: "Add allergy" })).toBeVisible();
+    await expect(page.getByTestId("allergy-row-a2")).toContainText("severe");
+  });
 });
 
 test("form-associated input takes part in native form validation", async ({ page }) => {
